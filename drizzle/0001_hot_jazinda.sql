@@ -1,0 +1,1 @@
+ALTER TABLE "clinic_schedule" DROP COLUMN "specific_date";

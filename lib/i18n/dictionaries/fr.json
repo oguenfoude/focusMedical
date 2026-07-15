@@ -1,0 +1,468 @@
+{
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "patients": "Patients",
+    "reservations": "Réservations",
+    "schedule": "Emploi du temps",
+    "consultations": "Consultations",
+    "prescriptions": "Ordonnances",
+    "settings": "Paramètres",
+    "medications": "Médicaments",
+    "finances": "Finances"
+  },
+  "common": {
+    "search": "Rechercher...",
+    "actions": "Actions",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "create": "Créer",
+    "noData": "Aucune donnée trouvée",
+    "show": "Afficher",
+    "entries": "entrées",
+    "page": "Page",
+    "of": "sur",
+    "total": "total",
+    "currency": "DA",
+    "online": "En ligne",
+    "back": "Retour",
+    "reset": "Réinitialiser",
+    "yearsOld": "ans",
+    "unknown": "Inconnu",
+    "signOut": "Déconnexion",
+    "expandSidebar": "Développer la barre latérale",
+    "collapseSidebar": "Réduire la barre latérale",
+    "adjustSearch": "Essayez de modifier votre recherche.",
+    "minLength": "6 caractères minimum",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "all": "Tous"
+  },
+  "dashboard": {
+    "welcomeDoctor": "Bienvenue, Dr. ",
+    "welcomeSecretary": "Bienvenue, ",
+    "doctorOverview": "Voici un aperçu de votre cabinet.",
+    "secretaryOverview": "Voici ce qui se passe dans votre clinique aujourd'hui.",
+    "totalPatients": "Total des Patients",
+    "scheduledReservations": "Planifiées",
+    "todayIncome": "Revenu du Jour",
+    "quickActions": "Actions Rapides",
+    "quickActionsDesc": "Ajouter patients & réservations"
+  },
+  "patients": {
+    "title": "Patients",
+    "subtitle": "Gérer les patients de la clinique",
+    "create": "Créer un Patient",
+    "edit": "Modifier le Patient",
+    "deleteTitle": "Supprimer le Patient",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce patient ? Cette action est irréversible.",
+    "medicalHistory": "Historique médical",
+    "fields": {
+      "name": "Nom Complet",
+      "fullName": "Nom Complet",
+      "birthDate": "Âge / Date de Naissance",
+      "age": "Âge",
+      "dateOfBirth": "Date de Naissance",
+      "gender": "Genre",
+      "male": "Homme",
+      "female": "Femme",
+      "bloodType": "Groupe Sanguin",
+      "phone": "Numéro de Téléphone",
+      "allergies": "Allergies",
+      "chronicConditions": "Maladies Chroniques",
+      "note": "Notes",
+      "weight": "Poids (kg)",
+      "height": "Taille (cm)"
+    },
+    "placeholders": {
+      "name": "ex. Ahmed Benali",
+      "age": "ex. 30",
+      "dob": "jj/mm/aaaa",
+      "bloodType": "ex. A+, B-, O+",
+      "phone": "ex. 0555 12 34 56",
+      "allergies": "ex. Pénicilline, Aspirine...",
+      "chronicConditions": "ex. Diabète, Hypertension...",
+      "note": "Notes supplémentaires..."
+    },
+    "info": "Informations du Patient",
+    "toast": {
+      "created": "Patient créé",
+      "updated": "Patient modifié",
+      "deleted": "Patient supprimé"
+    }
+  },
+  "consultations": {
+    "title": "Consultations",
+    "subtitle": "Gérer les consultations",
+    "create": "Créer une Consultation",
+    "edit": "Modifier la Consultation",
+    "deleteTitle": "Supprimer la Consultation",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette consultation ?",
+    "startConsultation": "Démarrer la Consultation",
+    "newConsultation": "Nouvelle Consultation",
+    "fields": {
+      "patient": "Patient",
+      "date": "Date",
+      "diagnosis": "Diagnostic",
+      "vitalSigns": "Signes Vitaux",
+      "notes": "Notes",
+      "price": "Prix (DZD)",
+      "selectPatient": "Sélectionner un Patient"
+    },
+    "preview": {
+      "title": "Aperçu",
+      "patient": "Patient",
+      "date": "Date",
+      "description": "Description du Patient",
+      "rapport": "Rapport d'Examen",
+      "diagnosis": "Diagnostic",
+      "prescription": "Ordonnance",
+      "emptyPlaceholder": "Rédigez une ordonnance pour voir l'aperçu..."
+    },
+    "form": {
+      "description": "Description du Patient",
+      "rapport": "Rapport d'Examen",
+      "diagnosis": "Diagnostic",
+      "vitalSignsPlaceholder": "ex. TA: 12/8, Poul: 72, T°: 37°C",
+      "prescription": "Ordonnance",
+      "prescriptionPlaceholder": "Écrire l'ordonnance ici..."
+    },
+    "buttons": {
+      "save": "Enregistrer la Consultation",
+      "reset": "Réinitialiser",
+      "back": "Retour",
+      "copyLastPrescription": "Copier la Dernière Ordonnance"
+    },
+    "medicines": {
+      "search": "Rechercher des médicaments...",
+      "searchPlaceholder": "Tapez pour rechercher des médicaments...",
+      "noResults": "Aucun médicament trouvé"
+    },
+    "toast": {
+      "created": "Consultation enregistrée avec succès",
+      "error": "Erreur lors de l'enregistrement de la consultation"
+    },
+    "linkedReservation": "Lié à la réservation du",
+    "standaloneConsultation": "Consultation indépendante"
+  },
+  "ordonnances": {
+    "title": "Ordonnances",
+    "subtitle": "Gérer les ordonnances",
+    "create": "Créer une Ordonnance",
+    "edit": "Modifier l'Ordonnance",
+    "deleteTitle": "Supprimer l'Ordonnance",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette ordonnance ?",
+    "fields": {
+      "patient": "Patient",
+      "date": "Date",
+      "medications": "Médicaments (un par ligne)",
+      "selectPatient": "Sélectionner un Patient"
+    },
+    "print": "Imprimer PDF",
+    "printA5": {
+      "title": "Imprimer l'Ordonnance",
+      "doctor": "Médecin",
+      "patient": "Patient",
+      "age": "Âge",
+      "date": "Date",
+      "diagnosis": "Diagnostic",
+      "prescription": "Ordonnance",
+      "signature": "Signature & Cachet",
+      "noPrescription": "Aucune ordonnance n'a été rédigée pour cette consultation.",
+      "specialty": "Spécialité",
+      "ordreNumber": "N° Immatriculation Ordre",
+      "gender": "Genre",
+      "height": "Taille",
+      "weight": "Poids"
+    },
+    "templates": {
+      "standard": "Standard",
+      "standardDesc": "En-tête centré, mise en page épurée avec informations patient en ligne horizontale.",
+      "compact": "Compact",
+      "compactDesc": "En-tête aligné à gauche, tableau patient encadré, lignes d'ordonnance séparées.",
+      "elegant": "Élégant",
+      "elegantDesc": "En-tête à double trait, bloc patient ombré, typographie raffinée.",
+      "minimal": "Minimal",
+      "minimalDesc": "En-tête en two-up, informations patient en texte brut, liste d'ordonnance simple."
+    }
+  },
+  "medications": {
+    "title": "Médicaments",
+    "subtitle": "Catalogue de médicaments du cabinet",
+    "create": "Ajouter un Médicament",
+    "edit": "Modifier le Médicament",
+    "deleteTitle": "Supprimer le Médicament",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce médicament ?",
+    "fields": {
+      "name": "Nom du médicament",
+      "defaultDosage": "Posologie par défaut",
+      "note": "Note"
+    },
+    "placeholders": {
+      "name": "Ex: Doliprane",
+      "defaultDosage": "Ex: 1 comprimé matin et soir, 7 jours",
+      "note": "Note optionnelle..."
+    },
+    "empty": "Aucun médicament dans le catalogue",
+    "emptyDesc": "Ajoutez des médicaments fréquemment utilisés pour les insérer rapidement dans les ordonnances.",
+    "insert": "Insérer",
+    "toast": {
+      "created": "Médicament ajouté avec succès",
+      "updated": "Médicament modifié avec succès",
+      "deleted": "Médicament supprimé avec succès"
+    }
+  },
+  "reservations": {
+    "title": "Réservations",
+    "subtitle": "Gérer les réservations",
+    "create": "Créer une Réservation",
+    "edit": "Modifier la Réservation",
+    "deleteTitle": "Supprimer la Réservation",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette réservation ?",
+    "cancelTitle": "Annuler la Réservation",
+    "cancelConfirm": "Êtes-vous sûr de vouloir annuler cette réservation ?",
+    "markDoneTitle": "Terminer la Réservation",
+    "markDoneConfirm": "Êtes-vous sûr de vouloir marquer cette réservation comme terminée ?",
+    "fields": {
+      "patient": "Patient",
+      "date": "Date",
+      "time": "Heure",
+      "type": "Type",
+      "status": "Statut",
+      "selectPatient": "Sélectionner un Patient",
+      "selectStatus": "Sélectionner le Statut",
+      "searchPatient": "Rechercher par nom ou téléphone..."
+    },
+    "types": {
+      "consultation": "Consultation",
+      "checkup": "Contrôle",
+      "emergency": "Urgence"
+    },
+    "statuses": {
+      "scheduled": "Planifié",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "toast": {
+      "created": "Réservation créée",
+      "updated": "Réservation modifiée",
+      "deleted": "Réservation supprimée"
+    }
+  },
+  "schedule": {
+    "title": "Emploi du temps",
+    "subtitle": "Gérer les jours de travail",
+    "create": "Ajouter un Jour de Travail",
+    "edit": "Modifier le Jour de Travail",
+    "deleteTitle": "Supprimer le Jour de Travail",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce jour de travail ?",
+    "fields": {
+      "dayOfWeek": "Jour de la Semaine",
+      "startTime": "Heure de Début",
+      "endTime": "Heure de Fin",
+      "selectDay": "Sélectionner le Jour"
+    },
+    "days": {
+      "0": "Dimanche",
+      "1": "Lundi",
+      "2": "Mardi",
+      "3": "Mercredi",
+      "4": "Jeudi",
+      "5": "Vendredi",
+      "6": "Samedi"
+    },
+    "weeklySchedule": "Programme Hebdomadaire",
+    "open": "Ouvert",
+    "dayOff": "Jour de Repos",
+    "setOpen": "Ouvrir",
+    "setDayOff": "Définir comme Repos",
+    "toast": {
+      "updated": "Jour mis à jour"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérer les détails de la clinique et les identifiants de sécurité",
+    "clinicConfig": "Configuration de la Clinique",
+    "clinicConfigDesc": "Mettez à jour les informations publiques et l'image de marque de votre clinique.",
+    "doctorProfile": "Profil du Médecin",
+    "doctorProfileDesc": "Vos informations professionnelles affichées sur les ordonnances.",
+    "prescriptionTemplate": "Modèle d'Ordonnance",
+    "prescriptionTemplateDesc": "Choisissez l'apparence de vos ordonnances lors de l'impression.",
+    "prePrintedTemplate": "Mode Papier Pré-Imprimé",
+    "prePrintedTemplateDesc": "Masque l'en-tête et les infos du docteur pour impression sur papier pré-imprimé",
+    "security": "Identifiants de Sécurité",
+    "securityDesc": "Mettez à jour votre adresse e-mail ou mot de passe.",
+    "fields": {
+      "logo": "Logo de la Clinique",
+      "name": "Nom de la Clinique",
+      "address": "Adresse",
+      "phone": "Numéro de Téléphone",
+      "specialty": "Spécialité",
+      "ordreRegistrationNumber": "Numéro d'Immatriculation Ordre",
+      "newEmail": "Nouvelle Adresse E-mail",
+      "newPassword": "Nouveau Mot de Passe"
+    },
+    "placeholders": {
+      "keepCurrent": "Laisser vide pour conserver l'actuel",
+      "specialty": "ex. Médecin généraliste, Dentiste",
+      "ordreRegistrationNumber": "ex. 12345",
+      "chooseLogo": "Choisir un logo..."
+    },
+    "buttons": {
+      "save": "Enregistrer les Détails",
+      "saving": "Enregistrement...",
+      "saveProfile": "Enregistrer le Profil",
+      "updateCredentials": "Mettre à Jour les Identifiants",
+      "updating": "Mise à jour..."
+    },
+    "toast": {
+      "clinicUpdated": "Détails de la clinique mis à jour",
+      "profileUpdated": "Profil du médecin mis à jour",
+      "securityUpdated": "Identifiants de sécurité mis à jour"
+    }
+  },
+  "secretaries": {
+    "title": "Secrétaires",
+    "subtitle": "Gérer le personnel administratif de la clinique",
+    "add": "Ajouter un Secrétaire",
+    "create": "Ajouter un Secrétaire",
+    "edit": "Modifier le Secrétaire",
+    "deleteTitle": "Supprimer le Secrétaire",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce secrétaire ? Il perdra l'accès au système.",
+    "fields": {
+      "fullName": "Nom Complet",
+      "email": "Adresse E-mail",
+      "phone": "Téléphone",
+      "password": "Mot de Passe"
+    },
+    "placeholders": {
+      "emailUpdate": "Entrer un nouvel e-mail pour mettre à jour",
+      "keepCurrent": "Laisser vide pour conserver l'actuel",
+      "search": "Rechercher des secrétaires..."
+    },
+    "table": {
+      "name": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "addedOn": "Ajouté le"
+    },
+    "emptyState": "Aucun secrétaire ajouté pour le moment.",
+    "toast": {
+      "created": "Secrétaire créé",
+      "updated": "Secrétaire modifié",
+      "deleted": "Secrétaire supprimé"
+    }
+  },
+  "landing": {
+    "signIn": "Se connecter",
+    "getStarted": "Commencer",
+    "badge": "Conçu pour les professionnels de santé modernes",
+    "title1": "Gérez votre cabinet avec",
+    "title2": "une clarté absolue",
+    "subtitle": "FocusClinic permet aux médecins et secrétaires de gérer les patients, planifier les rendez-vous et rédiger des ordonnances sur une plateforme premium et intuitive.",
+    "ctaStart": "Créez votre clinique gratuitement",
+    "ctaLogin": "Accéder au tableau de bord",
+    "featuresTitle": "Tout ce dont vous avez besoin pour vous concentrer sur les soins",
+    "featuresSubtitle": "Nous avons soigné chaque détail pour que vous n'ayez pas à le faire.",
+    "feature1Title": "Gestion des Patients",
+    "feature1Desc": "Recherchez instantanément, consultez les historiques et gérez les profils avec une rapidité fulgurante.",
+    "feature2Title": "Planification Intelligente",
+    "feature2Desc": "Calendriers visuels, réservations rapides et contrôles d'accès pour le secrétariat.",
+    "feature3Title": "Confidentialité Totale",
+    "feature3Desc": "Vos données sont strictement cloisonnées. Une sécurité multi-locataires complète.",
+    "footerText": "Conçu avec précision pour la santé."
+  },
+  "auth": {
+    "step1": "Vos Informations",
+    "step2": "Détails de la Clinique",
+    "next": "Suivant",
+    "back": "Retour",
+    "phone": "Numéro de Téléphone",
+    "clinicName": "Nom de la Clinique",
+    "clinicAddress": "Adresse de la Clinique",
+    "clinicPhone": "Téléphone de la Clinique",
+    "welcomeBack": "Bon retour",
+    "signInSubtitle": "Connectez-vous à votre tableau de bord",
+    "email": "Adresse Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié?",
+    "signInButton": "Se Connecter",
+    "signingIn": "Connexion en cours...",
+    "noAccount": "Vous n'avez pas de compte?",
+    "createAccount": "Créer un compte",
+    "fullName": "Nom Complet",
+    "nextClinicDetails": "Suivant — Détails de la Clinique",
+    "clinicLogoOptional": "Logo de la Clinique (Optionnel)",
+    "chooseLogo": "Choisir un logo...",
+    "createAccountButton": "Créer le Compte",
+    "creatingAccount": "Création en cours...",
+    "hasAccount": "Vous avez déjà un compte?",
+    "signInLink": "Se connecter",
+    "createYourAccount": "Créez votre compte",
+    "setUpClinic": "Configurez votre clinique en quelques minutes",
+    "sidePanelSubtitle": "La plateforme de nouvelle génération pour la gestion de pratique médicale.",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "resetPasswordSubtitle": "Entrez votre e-mail pour recevoir un lien de réinitialisation",
+    "checkEmail": "Vérifiez votre e-mail",
+    "resetEmailSent": "Nous avons envoyé un lien de réinitialisation à votre adresse e-mail.",
+    "backToSignIn": "Retour à la connexion",
+    "sending": "Envoi en cours...",
+    "sendResetLink": "Envoyer le lien",
+    "rememberPassword": "Vous vous souvenez de votre mot de passe?",
+    "setNewPassword": "Définir un nouveau mot de passe",
+    "setNewPasswordSubtitle": "Entrez votre nouveau mot de passe ci-dessous",
+    "passwordRequirements": "Exigences du mot de passe",
+    "atLeast6Chars": "Au moins 6 caractères",
+    "newPassword": "Nouveau mot de passe",
+    "enterNewPassword": "Entrez le nouveau mot de passe",
+    "updating": "Mise à jour...",
+    "updatePassword": "Mettre à jour le mot de passe",
+    "doctor": "Médecin",
+    "secretary": "Secrétaire",
+    "criticalError": "Erreur critique",
+    "criticalErrorDesc": "L'application a rencontré une erreur critique. Veuillez actualiser la page.",
+    "unknownError": "Une erreur inconnue s'est produite",
+    "refreshApp": "Actualiser l'application",
+    "pageNotFound": "Page non trouvée",
+    "pageNotFoundDesc": "La page que vous recherchez n'existe pas.",
+    "goToLogin": "Aller à la connexion",
+    "somethingWentWrong": "Quelque chose s'est mal passé",
+    "unexpectedError": "Une erreur inattendue s'est produite lors du chargement de cette page. Notre équipe a été notifiée.",
+    "tryAgain": "Réessayer",
+    "generating": "Génération en cours...",
+    "failedPdf": "Échec de la génération du PDF"
+  },
+  "finances": {
+    "title": "Finances",
+    "subtitle": "Revenus et transactions du cabinet",
+    "addPayment": "Enregistrer un Paiement",
+    "fields": {
+      "amount": "Montant",
+      "type": "Type",
+      "note": "Note",
+      "patient": "Patient",
+      "consultation": "Consultation"
+    },
+    "types": {
+      "consultation": "Consultation",
+      "additional": "Supplément",
+      "other": "Autre"
+    },
+    "placeholders": {
+      "amount": "Montant en DA",
+      "note": "Note optionnelle..."
+    },
+    "summary": {
+      "thisMonth": "Ce mois-ci",
+      "allTime": "Total"
+    },
+    "empty": "Aucune transaction enregistrée",
+    "toast": {
+      "created": "Paiement enregistré avec succès"
+    }
+  }
+}

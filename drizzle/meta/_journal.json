@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1783807876411,
+      "tag": "0000_fuzzy_blizzard",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1783808749254,
+      "tag": "0001_hot_jazinda",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783813839587,
+      "tag": "0002_tense_ultron",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783814436317,
+      "tag": "0003_stormy_shaman",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783854080424,
+      "tag": "0004_shocking_medusa",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783855502930,
+      "tag": "0005_rainy_lyja",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1783900000000,
+      "tag": "0006_add_medicines_and_preprinted",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#283964"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="24" fill="#ffffff" />
+  <!-- A medical cross/plus shape -->
+  <!-- Vertical bar -->
+  <rect x="48" y="24" width="24" height="72" rx="4" fill="url(#grad1)" />
+  <!-- Horizontal bar -->
+  <rect x="24" y="48" width="72" height="24" rx="4" fill="url(#grad1)" />
+  <!-- Green Accent Dot/Leaf -->
+  <circle cx="78" cy="42" r="8" fill="#52be8d" />
+</svg>
