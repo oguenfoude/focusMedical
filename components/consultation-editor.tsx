@@ -3,31 +3,23 @@
 import { useState, useTransition, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { saveConsultation } from "@/lib/actions/consultations";
-import { searchMedicines } from "@/lib/actions/medicines";
-import { searchMedications } from "@/lib/actions/medications";
+import { searchDrugs } from "@/lib/actions/search-drugs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, Save, RotateCcw, FileText, Calendar, Download, Copy, Search, Pill } from "lucide-react";
+import { ArrowLeft, Save, RotateCcw, FileText, Calendar, Download, Copy, Pill } from "lucide-react";
 import { PrescriptionPreview } from "@/components/prescriptions/PrescriptionPreview";
 import { generatePrescriptionPDF, downloadPDF } from "@/components/prescriptions/PrescriptionPDF";
 import { computeAgeFromDob, isDobFormat } from "@/lib/utils";
 import type { TemplateId } from "@/components/prescriptions";
 
-interface Medicine {
-  id: string;
-  brandName: string;
-  dci: string | null;
-  dosage: string | null;
-  form: string | null;
-}
-
-interface MedicationCatalog {
+interface DrugResult {
   id: string;
   name: string;
-  defaultDosage: string | null;
+  subtitle: string;
+  source: "catalog" | "reference";
 }
 
 interface ConsultationEditorProps {
@@ -60,13 +52,8 @@ interface ConsultationEditorProps {
   consultation?: {
     id: string;
     date: string;
-    descriptionMalade: string | null;
-    rapport: string | null;
-    diagnostique: string | null;
-    vitalSigns: string | null;
     ordonnanceContent: string | null;
     reservationId: string | null;
-    priceItems?: string | null;
   };
   lastPrescriptionContent?: string | null;
   dict: import("@/lib/i18n/types").Dictionary;
@@ -98,26 +85,16 @@ export function ConsultationEditor({
       ? new Date(reservation.date).toISOString().split("T")[0]
       : today
   );
-  const [diagnostique, setDiagnostique] = useState(consultation?.diagnostique || "");
-  const [vitalSigns, setVitalSigns] = useState(consultation?.vitalSigns || "");
   const [ordonnanceContent, setOrdonnanceContent] = useState(consultation?.ordonnanceContent || "");
   const [downloadingPDF, setDownloadingPDF] = useState(false);
 
-  // Medicine autocomplete state
-  const [medicineQuery, setMedicineQuery] = useState("");
-  const [medicineResults, setMedicineResults] = useState<Medicine[]>([]);
-  const [showMedicineDropdown, setShowMedicineDropdown] = useState(false);
-  const [searchingMedicine, startMedicineSearch] = useTransition();
-  const medicineSearchRef = useRef<HTMLDivElement>(null);
+  // Drug search state
+  const [drugQuery, setDrugQuery] = useState("");
+  const [drugResults, setDrugResults] = useState<DrugResult[]>([]);
+  const [showDrugDropdown, setShowDrugDropdown] = useState(false);
+  const [searchingDrug, startDrugSearch] = useTransition();
+  const drugSearchRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Medication catalog autocomplete state
-  const [catalogQuery, setCatalogQuery] = useState("");
-  const [catalogResults, setCatalogResults] = useState<MedicationCatalog[]>([]);
-  const [showCatalogDropdown, setShowCatalogDropdown] = useState(false);
-  const [searchingCatalog, startCatalogSearch] = useTransition();
-  const catalogSearchRef = useRef<HTMLDivElement>(null);
-  const catalogDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const linkedReservationDate = !isEdit && reservation?.date
     ? new Date(reservation.date).toLocaleDateString()
@@ -126,73 +103,39 @@ export function ConsultationEditor({
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (medicineSearchRef.current && !medicineSearchRef.current.contains(e.target as Node)) {
-        setShowMedicineDropdown(false);
-      }
-      if (catalogSearchRef.current && !catalogSearchRef.current.contains(e.target as Node)) {
-        setShowCatalogDropdown(false);
+      if (drugSearchRef.current && !drugSearchRef.current.contains(e.target as Node)) {
+        setShowDrugDropdown(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleMedicineSearch = useCallback((query: string) => {
-    setMedicineQuery(query);
+  const handleDrugSearch = useCallback((query: string) => {
+    setDrugQuery(query);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (query.trim().length < 2) {
-      setMedicineResults([]);
-      setShowMedicineDropdown(false);
+      setDrugResults([]);
+      setShowDrugDropdown(false);
       return;
     }
     debounceRef.current = setTimeout(() => {
-      startMedicineSearch(async () => {
-        const result = await searchMedicines(query);
+      startDrugSearch(async () => {
+        const result = await searchDrugs(query);
         if ("results" in result) {
-          setMedicineResults(result.results);
-          setShowMedicineDropdown(result.results.length > 0);
+          setDrugResults(result.results);
+          setShowDrugDropdown(result.results.length > 0);
         }
       });
-    }, 300);
+    }, 500);
   }, []);
 
-  function handleSelectMedicine(med: Medicine) {
-    const parts = [med.brandName];
-    if (med.dci) parts.push(`(${med.dci})`);
-    if (med.dosage) parts.push(`- ${med.dosage}`);
-    if (med.form) parts.push(`[${med.form}]`);
-    const line = parts.join(" ") + "\n";
+  function handleSelectDrug(drug: DrugResult) {
+    const line = drug.subtitle ? `${drug.name} — ${drug.subtitle}\n` : `${drug.name}\n`;
     setOrdonnanceContent((prev) => prev + line);
-    setMedicineQuery("");
-    setMedicineResults([]);
-    setShowMedicineDropdown(false);
-  }
-
-  const handleCatalogSearch = useCallback((query: string) => {
-    setCatalogQuery(query);
-    if (catalogDebounceRef.current) clearTimeout(catalogDebounceRef.current);
-    if (query.trim().length < 2) {
-      setCatalogResults([]);
-      setShowCatalogDropdown(false);
-      return;
-    }
-    catalogDebounceRef.current = setTimeout(() => {
-      startCatalogSearch(async () => {
-        const result = await searchMedications(query);
-        if ("results" in result) {
-          setCatalogResults(result.results);
-          setShowCatalogDropdown(result.results.length > 0);
-        }
-      });
-    }, 300);
-  }, []);
-
-  function handleSelectCatalogMedication(med: MedicationCatalog) {
-    const line = med.defaultDosage ? `${med.name} — ${med.defaultDosage}\n` : `${med.name}\n`;
-    setOrdonnanceContent((prev) => prev + line);
-    setCatalogQuery("");
-    setCatalogResults([]);
-    setShowCatalogDropdown(false);
+    setDrugQuery("");
+    setDrugResults([]);
+    setShowDrugDropdown(false);
   }
 
   function handleCopyLastPrescription() {
@@ -204,13 +147,9 @@ export function ConsultationEditor({
   function handleReset() {
     if (isEdit) {
       setDate(consultation.date ? new Date(consultation.date).toISOString().split("T")[0] : today);
-      setDiagnostique(consultation.diagnostique || "");
-      setVitalSigns(consultation.vitalSigns || "");
       setOrdonnanceContent(consultation.ordonnanceContent || "");
     } else {
       setDate(reservation?.date ? new Date(reservation.date).toISOString().split("T")[0] : today);
-      setDiagnostique("");
-      setVitalSigns("");
       setOrdonnanceContent("");
     }
     setError(null);
@@ -224,8 +163,6 @@ export function ConsultationEditor({
         patientId: patient.id,
         reservationId: reservation?.id || consultation?.reservationId || undefined,
         date,
-        diagnostique: diagnostique || undefined,
-        vitalSigns: vitalSigns || undefined,
         ordonnanceContent: ordonnanceContent || undefined,
       });
 
@@ -262,7 +199,7 @@ export function ConsultationEditor({
           weight: patient.weightKg,
         },
         consultationDate: date ? new Date(date).toLocaleDateString() : "",
-        diagnostique: diagnostique || null,
+        diagnostique: null,
         ordonnanceContent: ordonnanceContent || null,
         prePrintedTemplate: clinic.prePrintedTemplate,
         labels: {
@@ -357,105 +294,44 @@ export function ConsultationEditor({
               />
             </div>
 
-            {/* Diagnosis */}
-            <div className="space-y-2">
-              <Label htmlFor="diagnostique" className="text-sm font-medium text-foreground/80">
-                {dict.consultations.fields.diagnosis}
-              </Label>
-              <Textarea
-                id="diagnostique"
-                value={diagnostique}
-                onChange={(e) => setDiagnostique(e.target.value)}
-                placeholder={dict.consultations.fields.diagnosis + "..."}
-                rows={3}
-              />
-            </div>
-
-            {/* Vital Signs */}
-            <div className="space-y-2">
-              <Label htmlFor="vitalSigns" className="text-sm font-medium text-foreground/80">
-                {dict.consultations.fields.vitalSigns}
-              </Label>
-              <Textarea
-                id="vitalSigns"
-                value={vitalSigns}
-                onChange={(e) => setVitalSigns(e.target.value)}
-                placeholder={dict.consultations.form.vitalSignsPlaceholder}
-                rows={2}
-              />
-            </div>
-
-            {/* Medication Catalog Search */}
-            <div className="space-y-2" ref={catalogSearchRef}>
+            {/* Drug Search */}
+            <div className="space-y-2" ref={drugSearchRef}>
               <Label className="text-sm font-medium text-foreground/80 flex items-center gap-2">
                 <Pill className="h-3.5 w-3.5" />
-                {dict.medications.title}
+                {dict.consultations.drugs.search}
               </Label>
               <div className="relative">
                 <Input
-                  value={catalogQuery}
-                  onChange={(e) => handleCatalogSearch(e.target.value)}
-                  placeholder={dict.medications.placeholders.name}
+                  value={drugQuery}
+                  onChange={(e) => handleDrugSearch(e.target.value)}
+                  placeholder={dict.consultations.drugs.searchPlaceholder}
                   className="h-9"
                 />
-                {showCatalogDropdown && catalogResults.length > 0 && (
+                {showDrugDropdown && drugResults.length > 0 && (
                   <div className="absolute z-50 top-full mt-1 w-full rounded-lg border border-border bg-popover shadow-md max-h-60 overflow-auto">
-                    {catalogResults.map((med) => (
+                    {drugResults.map((drug) => (
                       <button
-                        key={med.id}
+                        key={drug.id}
                         type="button"
                         className="w-full px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground transition-colors flex flex-col gap-0.5"
-                        onClick={() => handleSelectCatalogMedication(med)}
+                        onClick={() => handleSelectDrug(drug)}
                       >
-                        <span className="font-medium">{med.name}</span>
-                        {med.defaultDosage && (
-                          <span className="text-xs text-muted-foreground">{med.defaultDosage}</span>
+                        <span className="flex items-center gap-2">
+                          <span className="font-medium">{drug.name}</span>
+                          {drug.source === "catalog" && (
+                            <span className="text-[10px] font-medium text-primary bg-primary/10 rounded px-1 py-0.5">CATALOGUE</span>
+                          )}
+                        </span>
+                        {drug.subtitle && (
+                          <span className="text-xs text-muted-foreground">{drug.subtitle}</span>
                         )}
                       </button>
                     ))}
                   </div>
                 )}
-                {showCatalogDropdown && catalogResults.length === 0 && !searchingCatalog && (
+                {showDrugDropdown && drugResults.length === 0 && !searchingDrug && (
                   <div className="absolute z-50 top-full mt-1 w-full rounded-lg border border-border bg-popover shadow-md p-3 text-sm text-muted-foreground">
                     {dict.common.noData}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Medicine Search */}
-            <div className="space-y-2" ref={medicineSearchRef}>
-              <Label className="text-sm font-medium text-foreground/80 flex items-center gap-2">
-                <Search className="h-3.5 w-3.5" />
-                {dict.consultations.medicines.search}
-              </Label>
-              <div className="relative">
-                <Input
-                  value={medicineQuery}
-                  onChange={(e) => handleMedicineSearch(e.target.value)}
-                  placeholder={dict.consultations.medicines.searchPlaceholder}
-                  className="h-9"
-                />
-                {showMedicineDropdown && medicineResults.length > 0 && (
-                  <div className="absolute z-50 top-full mt-1 w-full rounded-lg border border-border bg-popover shadow-md max-h-60 overflow-auto">
-                    {medicineResults.map((med) => (
-                      <button
-                        key={med.id}
-                        type="button"
-                        className="w-full px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground transition-colors flex flex-col gap-0.5"
-                        onClick={() => handleSelectMedicine(med)}
-                      >
-                        <span className="font-medium">{med.brandName}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {[med.dci, med.dosage, med.form].filter(Boolean).join(" - ")}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {showMedicineDropdown && medicineResults.length === 0 && !searchingMedicine && (
-                  <div className="absolute z-50 top-full mt-1 w-full rounded-lg border border-border bg-popover shadow-md p-3 text-sm text-muted-foreground">
-                    {dict.consultations.medicines.noResults}
                   </div>
                 )}
               </div>
@@ -487,7 +363,7 @@ export function ConsultationEditor({
                 onChange={(e) => setOrdonnanceContent(e.target.value)}
                 placeholder={dict.consultations.form.prescriptionPlaceholder}
                 className="border-emerald-200 focus-visible:ring-emerald-500"
-                rows={8}
+                rows={10}
               />
             </div>
 
@@ -535,7 +411,7 @@ export function ConsultationEditor({
                   weight: patient.weightKg,
                 }}
                 consultationDate={date}
-                diagnostique={diagnostique || null}
+                diagnostique={null}
                 ordonnanceContent={ordonnanceContent || null}
                 prePrintedTemplate={clinic.prePrintedTemplate}
                 templateId={templateId}

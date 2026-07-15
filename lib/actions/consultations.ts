@@ -11,12 +11,7 @@ interface SaveConsultationInput {
   patientId: string;
   reservationId?: string;
   date: string;
-  descriptionMalade?: string;
-  rapport?: string;
-  diagnostique?: string;
-  vitalSigns?: string;
   ordonnanceContent?: string;
-  priceItems?: string;
 }
 
 export async function saveConsultation(
@@ -48,25 +43,10 @@ export async function saveConsultation(
 
     if (!existing) return { error: "Consultation not found" };
 
-    const [existingFull] = await db
-      .select()
-      .from(consultations)
-      .where(
-        and(
-          eq(consultations.id, data.consultationId),
-          eq(consultations.clinicId, authUser.clinicId)
-        )
-      );
-
     await db
       .update(consultations)
       .set({
         date: new Date(data.date),
-        descriptionMalade: data.descriptionMalade !== undefined ? data.descriptionMalade || null : existingFull?.descriptionMalade ?? null,
-        rapport: data.rapport !== undefined ? data.rapport || null : existingFull?.rapport ?? null,
-        diagnostique: data.diagnostique !== undefined ? data.diagnostique || null : existingFull?.diagnostique ?? null,
-        vitalSigns: data.vitalSigns !== undefined ? data.vitalSigns || null : existingFull?.vitalSigns ?? null,
-        priceItems: data.priceItems !== undefined ? data.priceItems || null : existingFull?.priceItems ?? null,
       })
       .where(and(eq(consultations.id, data.consultationId), eq(consultations.clinicId, authUser.clinicId)));
 
@@ -149,11 +129,6 @@ export async function saveConsultation(
         reservationId: resolvedReservationId,
         clinicUserId: authUser.clinicUsersId,
         date: new Date(data.date),
-        descriptionMalade: data.descriptionMalade || null,
-        rapport: data.rapport || null,
-        diagnostique: data.diagnostique || null,
-        vitalSigns: data.vitalSigns || null,
-        priceItems: data.priceItems || null,
       })
       .returning({ id: consultations.id });
 

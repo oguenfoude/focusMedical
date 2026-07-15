@@ -2,29 +2,29 @@
 
 import React, { useState } from "react";
 import { DataTable } from "@/components/data-table";
-import { MedicationForm } from "@/components/forms/medication-form";
-import { DeleteDialog } from "@/components/delete-dialog";
-import { deleteMedication } from "@/lib/actions/medications";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Trash2, Pill } from "lucide-react";
 import { toast } from "sonner";
 import type { Dictionary } from "@/lib/i18n/types";
+import { deleteMedication } from "@/lib/actions/medications";
 
-interface Medication {
+interface Medicine {
   id: string;
-  name: string;
-  defaultDosage: string | null;
-  note: string | null;
+  brandName: string;
+  dci: string | null;
+  dosage: string | null;
+  form: string | null;
+  manufacturer: string | null;
+  isActive: boolean;
 }
 
 interface MedicationsClientProps {
-  medications: Medication[];
+  medicines: Medicine[];
+  totalCount: number;
   dict: Dictionary;
 }
 
-export function MedicationsClient({ medications, dict }: MedicationsClientProps) {
-  const [formOpen, setFormOpen] = useState(false);
-  const [editMedication, setEditMedication] = useState<Medication | undefined>();
+export function MedicationsClient({ medicines, totalCount, dict }: MedicationsClientProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   async function handleDelete() {
@@ -42,37 +42,34 @@ export function MedicationsClient({ medications, dict }: MedicationsClientProps)
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">{dict.medications.title}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{dict.medications.subtitle}</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+            {dict.medications.title}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {totalCount} medicaments references — Recherche par nom, DCI ou fabricant
+          </p>
         </div>
-        <Button onClick={() => { setEditMedication(undefined); setFormOpen(true); }}>
-          <Plus className="me-2 h-4 w-4" /> {dict.medications.create}
-        </Button>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-lg">
+          <Pill className="h-4 w-4" />
+          <span className="font-medium">{totalCount}</span>
+          <span>references</span>
+        </div>
       </div>
 
       <DataTable
         columns={[
-          { key: "name", label: dict.medications.fields.name },
-          { key: "defaultDosage", label: dict.medications.fields.defaultDosage },
-          { key: "note", label: dict.medications.fields.note },
+          { key: "brandName", label: "Nom Commercial" },
+          { key: "dci", label: "DCI (Principe Actif)" },
+          { key: "dosage", label: "Dosage" },
+          { key: "form", label: "Forme" },
+          { key: "manufacturer", label: "Fabricant" },
         ]}
-        data={medications as unknown as Record<string, unknown>[]}
-        emptyMessage={dict.medications.empty}
-        searchKeys={["name"]}
+        data={medicines as unknown as Record<string, unknown>[]}
+        emptyMessage="Aucun medicament trouve"
+        searchKeys={["brandName", "dci", "manufacturer", "form"]}
         dict={dict}
         actions={(row) => (
           <div className="flex gap-1 justify-end">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9"
-              onClick={() => {
-                setEditMedication(row as unknown as Medication);
-                setFormOpen(true);
-              }}
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -83,22 +80,6 @@ export function MedicationsClient({ medications, dict }: MedicationsClientProps)
             </Button>
           </div>
         )}
-      />
-
-      <MedicationForm
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        medication={editMedication}
-        dict={dict}
-      />
-
-      <DeleteDialog
-        open={!!deleteId}
-        onOpenChange={() => setDeleteId(null)}
-        onConfirm={handleDelete}
-        title={dict.medications.deleteTitle}
-        description={dict.medications.deleteConfirm}
-        dict={dict}
       />
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db/client";
 import { medicines } from "@/lib/db/schema";
-import { ilike, or } from "drizzle-orm";
+import { ilike, or, eq, and } from "drizzle-orm";
 
 export async function searchMedicines(
   query: string
@@ -22,7 +22,12 @@ export async function searchMedicines(
       form: medicines.form,
     })
     .from(medicines)
-    .where(or(ilike(medicines.brandName, searchTerm), ilike(medicines.dci, searchTerm)))
+    .where(
+      and(
+        eq(medicines.isActive, true),
+        or(ilike(medicines.brandName, searchTerm), ilike(medicines.dci, searchTerm))
+      )
+    )
     .limit(10);
 
   return { results };

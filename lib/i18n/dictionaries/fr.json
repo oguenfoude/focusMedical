@@ -106,11 +106,13 @@
     "fields": {
       "patient": "Patient",
       "date": "Date",
-      "diagnosis": "Diagnostic",
-      "vitalSigns": "Signes Vitaux",
       "notes": "Notes",
       "price": "Prix (DZD)",
       "selectPatient": "Sélectionner un Patient"
+    },
+    "drugs": {
+      "search": "Rechercher un médicament",
+      "searchPlaceholder": "Tapez le nom du médicament..."
     },
     "preview": {
       "title": "Aperçu",
@@ -123,10 +125,6 @@
       "emptyPlaceholder": "Rédigez une ordonnance pour voir l'aperçu..."
     },
     "form": {
-      "description": "Description du Patient",
-      "rapport": "Rapport d'Examen",
-      "diagnosis": "Diagnostic",
-      "vitalSignsPlaceholder": "ex. TA: 12/8, Poul: 72, T°: 37°C",
       "prescription": "Ordonnance",
       "prescriptionPlaceholder": "Écrire l'ordonnance ici..."
     },

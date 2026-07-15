@@ -133,6 +133,8 @@ export const medicines = pgTable("medicines", {
   dci: text("dci"),
   dosage: text("dosage"),
   form: text("form"),
+  manufacturer: text("manufacturer"),
+  isActive: boolean("is_active").default(true).notNull(),
 });
 
 export const medications = pgTable("medications", {

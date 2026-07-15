@@ -16,69 +16,34 @@ export default async function PrintPrescriptionPage(props: {
   if (!authUser) return null;
   if (authUser.role !== "doctor") redirect("/secretary");
 
-  // Fetch consultation
+  const clinicId = authUser.clinicId;
+
   const [consultation] = await db
     .select()
     .from(consultations)
-    .where(
-      and(
-        eq(consultations.id, params.id),
-        eq(consultations.clinicId, authUser.clinicId)
-      )
-    );
+    .where(and(eq(consultations.id, params.id), eq(consultations.clinicId, clinicId)));
 
   if (!consultation) notFound();
 
-  // Fetch patient
-  const [patient] = await db
-    .select()
-    .from(patients)
-    .where(
-      and(
-        eq(patients.id, consultation.patientId),
-        eq(patients.clinicId, authUser.clinicId)
-      )
-    );
+  const [patient, clinic, [ordonnance]] = await Promise.all([
+    db.select().from(patients).where(and(eq(patients.id, consultation.patientId), eq(patients.clinicId, clinicId))),
+    db.select().from(clinics).where(eq(clinics.id, clinicId)),
+    db.select().from(ordonnances).where(and(eq(ordonnances.consultationId, consultation.id), eq(ordonnances.clinicId, clinicId))),
+  ]);
 
-  if (!patient) notFound();
+  if (!patient[0] || !clinic[0]) notFound();
 
-  // Fetch clinic
-  const [clinic] = await db
-    .select()
-    .from(clinics)
-    .where(eq(clinics.id, authUser.clinicId));
+  const patientData = patient[0];
+  const clinicData = clinic[0];
 
-  if (!clinic) notFound();
-
-  // Fetch ordonnance (optional — null is OK)
-  const [ordonnance] = await db
-    .select()
-    .from(ordonnances)
-    .where(
-      and(
-        eq(ordonnances.consultationId, consultation.id),
-        eq(ordonnances.clinicId, authUser.clinicId)
-      )
-    );
-
-  // Resolve authoring doctor name and profile
   let doctorName: string | null = null;
   let doctorSpecialty: string | null = null;
   let doctorOrdreNumber: string | null = null;
   if (consultation.clinicUserId) {
     const [doc] = await db
-      .select({
-        fullName: clinicUsers.fullName,
-        specialty: clinicUsers.specialty,
-        ordreRegistrationNumber: clinicUsers.ordreRegistrationNumber,
-      })
+      .select({ fullName: clinicUsers.fullName, specialty: clinicUsers.specialty, ordreRegistrationNumber: clinicUsers.ordreRegistrationNumber })
       .from(clinicUsers)
-      .where(
-        and(
-          eq(clinicUsers.id, consultation.clinicUserId),
-          eq(clinicUsers.clinicId, authUser.clinicId)
-        )
-      );
+      .where(and(eq(clinicUsers.id, consultation.clinicUserId), eq(clinicUsers.clinicId, clinicId)));
     doctorName = doc?.fullName ?? null;
     doctorSpecialty = doc?.specialty ?? null;
     doctorOrdreNumber = doc?.ordreRegistrationNumber ?? null;
@@ -86,38 +51,23 @@ export default async function PrintPrescriptionPage(props: {
 
   const dictionary = await getDictionary();
 
-  // Format age for PDF
-  const ageDisplay = patient.age
-    ? isDobFormat(patient.age)
-      ? `${computeAgeFromDob(patient.age)} ${dictionary.common.yearsOld}`
-      : `${patient.age} ${dictionary.common.yearsOld}`
+  const ageDisplay = patientData.age
+    ? isDobFormat(patientData.age)
+      ? `${computeAgeFromDob(patientData.age)} ${dictionary.common.yearsOld}`
+      : `${patientData.age} ${dictionary.common.yearsOld}`
     : "";
 
-  // Format consultation date
-  const formattedDate = consultation.date.toLocaleDateString();
-
-  const templateId = (clinic.prescriptionTemplate as TemplateId) || "standard";
+  const templateId = (clinicData.prescriptionTemplate as TemplateId) || "standard";
 
   return (
     <PrintPageClient
       data={{
-        clinic: {
-          name: clinic.name,
-          address: clinic.address,
-          phone: clinic.phone,
-          logoUrl: clinic.logoUrl,
-        },
+        clinic: { name: clinicData.name, address: clinicData.address, phone: clinicData.phone, logoUrl: clinicData.logoUrl },
         doctorName,
         doctorSpecialty,
         doctorOrdreNumber,
-        patient: {
-          fullName: patient.fullName,
-          age: ageDisplay,
-          gender: patient.gender,
-          height: patient.heightCm,
-          weight: patient.weightKg,
-        },
-        consultationDate: formattedDate,
+        patient: { fullName: patientData.fullName, age: ageDisplay, gender: patientData.gender, height: patientData.heightCm, weight: patientData.weightKg },
+        consultationDate: consultation.date.toLocaleDateString(),
         diagnostique: consultation.diagnostique,
         ordonnanceContent: ordonnance?.content ?? null,
         labels: {

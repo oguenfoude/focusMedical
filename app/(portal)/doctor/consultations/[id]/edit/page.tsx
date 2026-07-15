@@ -126,13 +126,8 @@ export default async function EditConsultationPage(props: {
       consultation={{
         id: consultation.id,
         date: consultation.date.toISOString(),
-        descriptionMalade: consultation.descriptionMalade,
-        rapport: consultation.rapport,
-        diagnostique: consultation.diagnostique,
-        vitalSigns: consultation.vitalSigns,
         ordonnanceContent: ordonnance?.content || null,
         reservationId: consultation.reservationId,
-        priceItems: consultation.priceItems,
       }}
       lastPrescriptionContent={lastOrd?.content ?? null}
       dict={dictionary}

@@ -45,3 +45,6 @@ next-env.d.ts
 .claude/
 .agents/
 .playwright-mcp/
+
+# Scripts cache
+scripts/cache_miph.csv
