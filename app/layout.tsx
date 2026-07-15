@@ -10,10 +10,43 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FocusClinic — Medical Practice Management",
-  description: "The modern platform for managing your medical clinic, patients, appointments, and prescriptions.",
+  title: {
+    default: "FocusClinic — Gestion de Cabinet Medical",
+    template: "%s | FocusClinic",
+  },
+  description:
+    "La plateforme moderne pour gerer votre clinique, patients, rendez-vous et ordonnances. Concu pour les medecins et secretaires en Algerie.",
+  keywords: [
+    "cabinet medical",
+    "gestion patients",
+    "ordonnances",
+    "rendez-vous medicaux",
+    "clinique",
+    "medecin",
+    "secretaire",
+    "Algerie",
+  ],
+  authors: [{ name: "FocusClinic" }],
+  openGraph: {
+    type: "website",
+    locale: "fr_DZ",
+    siteName: "FocusClinic",
+    title: "FocusClinic — Gestion de Cabinet Medical",
+    description:
+      "La plateforme moderne pour gerer votre clinique, patients, rendez-vous et ordonnances.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FocusClinic — Gestion de Cabinet Medical",
+    description:
+      "La plateforme moderne pour gerer votre clinique, patients, rendez-vous et ordonnances.",
+  },
   icons: {
     icon: "/logo.svg",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

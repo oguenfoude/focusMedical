@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { patients, reservations, transactions } from "@/lib/db/schema";
 import { eq, count, and, sql } from "drizzle-orm";
 import { Users, CalendarClock, CalendarDays, DollarSign } from "lucide-react";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+
+export const metadata: Metadata = {
+  title: "Tableau de bord",
+  description: "Vue d'ensemble de la clinique.",
+};
 
 export default async function SecretaryDashboard() {
   const authUser = await getAuthUser();

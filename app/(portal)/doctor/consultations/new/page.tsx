@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { patients, clinics, reservations, clinicUsers, ordonnances, consultations } from "@/lib/db/schema";
@@ -5,6 +6,11 @@ import { eq, and, desc } from "drizzle-orm";
 import { ConsultationEditor } from "@/components/consultation-editor";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { notFound, redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Nouvelle consultation",
+  description: "Creez une nouvelle consultation et ordonnance.",
+};
 
 export default async function NewConsultationPage(props: {
   searchParams: Promise<{ patientId?: string; reservationId?: string }>;

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { consultations, ordonnances, patients, clinics, clinicUsers, reservations } from "@/lib/db/schema";
@@ -5,6 +6,10 @@ import { eq, and, desc } from "drizzle-orm";
 import { ConsultationEditor } from "@/components/consultation-editor";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { notFound, redirect } from "next/navigation";
+
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  return { title: "Modifier la consultation" };
+}
 
 export default async function EditConsultationPage(props: {
   params: Promise<{ id: string }>;

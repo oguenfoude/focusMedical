@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { consultations, ordonnances, patients, clinics, clinicUsers } from "@/lib/db/schema";
@@ -7,6 +8,10 @@ import { notFound, redirect } from "next/navigation";
 import { PrintPageClient } from "@/components/prescriptions/PrintPageClient";
 import { computeAgeFromDob, isDobFormat } from "@/lib/utils";
 import type { TemplateId } from "@/components/prescriptions";
+
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  return { title: "Imprimer l'ordonnance" };
+}
 
 export default async function PrintPrescriptionPage(props: {
   params: Promise<{ id: string }>;

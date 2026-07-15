@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { clinicSchedule } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { ScheduleClient } from "@/components/schedule-client";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+
+export const metadata: Metadata = {
+  title: "Emploi du temps",
+  description: "Configurez les horaires de la clinique.",
+};
 
 export default async function SecretarySchedulePage() {
   const authUser = await getAuthUser();

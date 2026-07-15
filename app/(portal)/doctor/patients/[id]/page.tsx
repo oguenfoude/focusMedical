@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { patients, consultations, ordonnances, reservations, transactions } from "@/lib/db/schema";
@@ -5,6 +6,10 @@ import { eq, and, desc, asc } from "drizzle-orm";
 import { PatientHistoryClient } from "@/components/patient-history-client";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { notFound } from "next/navigation";
+
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  return { title: "Historique du patient" };
+}
 
 export default async function PatientHistoryPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;

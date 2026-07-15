@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { clinicUsers } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import SecretariesClient from "@/components/secretaries-client";
+
+export const metadata: Metadata = {
+  title: "Secretaires",
+  description: "Gerez les comptes de vos secretaires.",
+};
 
 export default async function SecretariesPage() {
   const authUser = await getAuthUser();

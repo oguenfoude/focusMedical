@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { reservations, patients } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { ReservationsClient } from "@/components/reservations-client";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+
+export const metadata: Metadata = {
+  title: "Rendez-vous",
+  description: "Gerez les rendez-vous des patients.",
+};
 
 export default async function SecretaryReservationsPage() {
   const authUser = await getAuthUser();

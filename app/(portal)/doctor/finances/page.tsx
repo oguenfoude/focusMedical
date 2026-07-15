@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { transactions, patients, consultations } from "@/lib/db/schema";
 import { eq, desc, sql } from "drizzle-orm";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { FinancesClient } from "@/components/finances-client";
+
+export const metadata: Metadata = {
+  title: "Finances",
+  description: "Suivez les revenus et transactions de votre cabinet.",
+};
 
 export default async function FinancesPage() {
   const authUser = await getAuthUser();

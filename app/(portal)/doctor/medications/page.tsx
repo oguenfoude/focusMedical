@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { medicines } from "@/lib/db/schema";
 import { eq, desc, sql } from "drizzle-orm";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { MedicationsClient } from "@/components/medications-client";
+
+export const metadata: Metadata = {
+  title: "Medicaments",
+  description: "Referentiel de 4600+ medicaments du marche algerien.",
+};
 
 export default async function MedicationsPage() {
   const authUser = await getAuthUser();

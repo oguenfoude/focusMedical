@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { clinics, clinicUsers } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import SettingsClient from "@/components/settings-client";
+
+export const metadata: Metadata = {
+  title: "Parametres",
+  description: "Configurez votre clinique et votre profil.",
+};
 
 export default async function SettingsPage() {
   const authUser = await getAuthUser();

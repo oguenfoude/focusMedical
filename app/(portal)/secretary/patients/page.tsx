@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/helpers";
 import { db } from "@/lib/db/client";
 import { patients } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { PatientsClient } from "@/components/patients-client";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
+
+export const metadata: Metadata = {
+  title: "Patients",
+  description: "Gerez les dossiers des patients.",
+};
 
 export default async function SecretaryPatientsPage() {
   const authUser = await getAuthUser();
