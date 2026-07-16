@@ -1,6 +1,6 @@
 # FocusClinic — Agent Instructions
 
-Multi-tenant SaaS for medical clinics. Two roles: **Doctor** (consultations, prescriptions, settings, secretaries) and **Secretary** (patients, reservations, schedule).
+Multi-tenant SaaS for medical clinics. Two roles: **Doctor** (consultations, prescriptions, settings, secretaries, medications, finances) and **Secretary** (patients, reservations, schedule).
 
 ## Critical: Things That Will Break Your Code
 
@@ -69,7 +69,7 @@ Multi-tenancy is enforced at the application level. Every query that reads or wr
 - Consultations + Ordonnances + Clinic settings + Secretaries + Medications + Transactions: doctor only
 - Schedule: secretary only
 - Reservations: **both roles** (no server-side role check — route protection via proxy.ts handles access)
-- `searchMedications` and `searchMedicines`: both roles (used by consultation editor, which secretaries don't access but the action itself has no role gate)
+- `searchDrugs` and `searchMedications`: both roles (used by consultation editor, which secretaries don't access but the action itself has no role gate)
 
 ### 8. Zod v4 — not v3
 
@@ -79,19 +79,25 @@ This project uses `"zod": "^4.4.3"`. Zod v4 has a different API from v3. Do not 
 
 React 19 renamed `useFormState` to `useActionState`. All form actions use this hook.
 
+### 10. Drug search uses pg_trgm GIN indexes
+
+Drug search (`searchDrugs`) uses `ILIKE '%query%'` pattern. This requires **GIN trigram indexes** (not btree). The migration `0013` enables `pg_trgm` extension and creates GIN indexes on `medicines.brand_name`, `medicines.dci`, `medicines.form`, `medicines.manufacturer`, and `medications.name`. Do NOT create btree `text_pattern_ops` indexes — they don't work with leading wildcards.
+
 ## Commands
 
 ```bash
-npm run dev          # Start dev server (port 3000)
-npm run build        # Production build — catches TS errors that dev may miss
-npm run lint         # ESLint
-npx drizzle-kit generate  # Generate migration SQL from schema changes
+npm run dev              # Start dev server (port 3000)
+npm run build            # Production build — catches TS errors that dev may miss
+npm run lint             # ESLint
+npm run seed:medicines   # Seed 20 common Algerian medicines (dev)
+npx tsx scripts/import-miph-drugs.ts  # Import 4600+ drugs from MIPH nomenclature
+npx drizzle-kit generate  # Generate migration SQL from schema changes (requires TTY)
 npx drizzle-kit migrate   # Run migrations (loads DIRECT_URL from .env.local via dotenv)
 ```
 
 Always run `npm run build` before committing.
 
-**⚠ Missing columns migration**: The initial migration (`0000`) created basic columns for `clinics`, `clinic_users`, `patients`, `reservations`, `consultations`, `ordonnances`, and `clinic_schedule`. The Drizzle schema (`lib/db/schema.ts`) was later updated with 14 additional columns and type fixes. **Migration `drizzle/0009_fix_missing_columns.sql`** adds all missing columns. Apply it via Supabase SQL Editor, then run `npx drizzle-kit migrate` to mark it as applied. If you see errors like "column X does not exist" on any table, this migration hasn't been applied yet.
+**⚠ Missing columns migration**: The initial migration (`0000`) created basic columns for `clinics`, `clinic_users`, `patients`, `reservations`, `consultations`, `ordonnances`, and `clinic_schedule`. The Drizzle schema (`lib/db/schema.ts`) was later updated with 14 additional columns and type fixes. **Migration `drizzle/0009_fix_missing_columns.sql`** adds all missing columns. Apply it via Supabase SQL Editor, then run `npx drizzle-kit migrate` to mark it as applied.
 
 ## Database
 
@@ -101,36 +107,49 @@ Always run `npm run build` before committing.
 - Schema is in `lib/db/schema.ts` — this is the single source of truth. Never edit via Supabase Dashboard.
 - Driver is `postgres` npm package (not `pg`). Drizzle import is `drizzle-orm/postgres-js`.
 - No `ON DELETE CASCADE` on any FK. Deleting a parent with children fails at DB level — handle cleanup manually.
+
+### Table-specific notes
+
 - `patients.age` is `text` type, not integer. Can be a number string like `"30"` or a DOB string like `"01/01/2001"`. Zod validates both formats (numeric 0-150, or DD/MM/YYYY).
-- `clinic_users.authUserId` is `text` type (not uuid). Stores the Supabase auth user ID.
+- `patients.bloodType` is `text` type, nullable. Select options: A+, A-, B+, B-, AB+, AB-, O+, O-.
+- `patients.allergies` is `text` type, nullable. Free-text field for known allergies.
+- `patients.chronicConditions` is `text` type, nullable. Free-text field for chronic conditions.
+- `clinic_users.authUserId` is `text` type (not uuid). Stores the Supabase auth user ID. Has a B-tree index for fast lookups.
 - `clinic_users.fullName` is `text` type, NOT NULL. The doctor's or secretary's full name.
 - `clinic_users.phone` is `text` type, nullable. Contact phone number.
 - `clinic_users.specialty` is `text` type, nullable. Doctor's medical specialty (used in prescriptions).
 - `clinic_users.ordreRegistrationNumber` is `text` type, nullable. Doctor's ordre registration number (used in prescriptions).
 - `reservations.time` is `text` type, not `time`. Stores strings like `"09:00"`. Zod validates HH:MM (24h) format.
+- `reservations.type` is `text` type, NOT NULL, default `"consultation"`. Values: `"consultation"`, `"checkup"`, `"emergency"`.
 - `clinic_schedule` has a unique constraint on `(clinic_id, day_of_week)`. `dayOfWeek` is NOT NULL (0-6).
 - `consultations.clinicUserId` is nullable uuid FK to `clinic_users.id`. Set on create by `saveConsultation` — never overwritten on edit. Used to identify which doctor authored a consultation.
-- `clinics.specialty` column does NOT exist — it was removed. Do not reference it.
+- `consultations.vitalSigns` is `text` type, nullable. Stores vital signs data.
 - `clinics.logoUrl` is `text` type, nullable. Stores base64 data URL of the clinic logo.
 - `clinics.prescriptionTemplate` is `text` type, NOT NULL, default `"standard"`. Controls which PDF template is used for prescriptions. Valid values: `"standard"`, `"compact"`, `"elegant"`, `"minimal"`.
 - `clinics.prePrintedTemplate` is `boolean`, NOT NULL, default `false`. Hides header/doctor info in prescriptions for pre-printed paper.
-- `clinic_users.specialty` is `text` type, nullable. Doctor's medical specialty (used in prescriptions).
-- `clinic_users.ordreRegistrationNumber` is `text` type, nullable. Doctor's ordre registration number (used in prescriptions).
-- `patients.note` is `text` type, nullable. General notes about the patient.
-- `patients.price` is `integer` type, nullable. Custom consultation price for the patient.
-- `patients.isRegular` / `is_regular` is `boolean`, default false. Marks regular patients.
-- `patients.priceNote` / `price_note` is `text` type, nullable. Notes about the patient's pricing.
-- `medications` is per-clinic (has `clinicId` FK). Stores the doctor's frequently used medication catalog for quick insertion into prescriptions. NOT the same as `medicines` (global drug reference table without `clinicId`).
-- `medicines` is a global drug reference table (no `clinicId`). Contains `brandName`, `dci`, `dosage`, `form`. Used by `searchMedicines` in the consultation editor.
+- `medicines` is a global drug reference table (no `clinicId`). Contains `brandName`, `dci`, `dosage`, `form`, `manufacturer`, `isActive`. Has GIN trigram indexes for fast substring search.
+- `medications` is per-clinic (has `clinicId` FK). Stores the doctor's frequently used medication catalog for quick insertion into prescriptions.
 - `transactions` records financial transactions (consultation payments, additional fees). Has `clinicId` FK, nullable `patientId` and `consultationId`.
-- **drizzle-kit generate** requires an interactive terminal (TTY). If it fails with "Interactive prompts require a TTY terminal", you must run it manually from your terminal. The migration files in `drizzle/` are the source of truth for applied migrations.
-- **drizzle-kit migrate** requires `DIRECT_URL` env var. `drizzle.config.ts` loads it from `.env.local` via `dotenv`.
+
+### Migrations
+
+- `drizzle/0000` — Initial schema (7 tables)
+- `drizzle/0001` to `0005` — Schema refinements
+- `drizzle/0006` — Add `medicines` table + `pre_printed_template`
+- `drizzle/0007` — Add `transactions` table
+- `drizzle/0008` — Add `medications` table (per-clinic catalog)
+- `drizzle/0009` — **Critical**: Adds 14 missing columns across 5 tables
+- `drizzle/0010` — Add safety fields (blood_type, allergies, chronic_conditions, type, vital_signs)
+- `drizzle/0011` — Add `manufacturer` + `isActive` to medicines
+- `drizzle/0012` — B-tree indexes (superseded by 0013)
+- `drizzle/0013` — **pg_trgm GIN indexes** + auth_user_id index
+- `drizzle/0014` — Additional GIN indexes on form + manufacturer
 
 ## Auth Flow
 
-1. `signUp` creates Supabase auth user + `clinics` row + `clinic_users` row
+1. `signUp` creates Supabase auth user (Admin API) + `clinics` row + `clinic_users` row
 2. `signIn` authenticates via Supabase, queries `clinic_users` for role, redirects to `/doctor` or `/secretary`
-3. `proxy.ts` protects `/secretary/*` and `/doctor/*` routes — checks session + role via `getAuthUser()`
+3. `proxy.ts` protects `/secretary/*` and `/doctor/*` routes — calls `getAuthUser()` (single auth check)
 4. `getAuthUser()` in `lib/auth/helpers.ts` resolves user → clinic → role via Drizzle query
 5. `proxy.ts` creates its own Supabase client inline (does not import from `lib/supabase/server.ts` because the proxy layer doesn't have access to `next/headers` `cookies()`)
 
@@ -151,6 +170,15 @@ Always run `npm run build` before committing.
   - `index.tsx` — Template registry (exports all 4 templates)
   - `PrintPageClient.tsx` — Client component for print page with PDF download
 
+## Drug Database
+
+- **Source**: HuggingFace `tkawen/algerian-drug-nomenclature` (MIPH official nomenclature)
+- **4600+ drugs** from the Algerian pharmaceutical market
+- **Fields**: brand_name (commercial name), dci (active ingredient), dosage, form, manufacturer, is_active
+- **Import**: `npx tsx scripts/import-miph-drugs.ts` (uses DIRECT_URL, papaparse for CSV)
+- **Search**: `searchDrugs` action searches both `medications` (per-clinic, max 5) and `medicines` (global, max 10) in parallel
+- **Indexes**: GIN trigram indexes on brand_name, dci, form, manufacturer, medications.name for fast `%query%` substring search
+
 ## i18n
 
 - **French-only** — no locale switcher, no `NEXT_LOCALE` cookie, no English dictionary
@@ -160,6 +188,7 @@ Always run `npm run build` before committing.
 - Currency is `DA` (Algerian Dinar) — use `dict.common.currency`
 - Toast messages must also use dict keys (e.g., `dict.patients.toast.created`)
 - **Prescription print labels**: Use `dict.ordonnances.printA5.*` keys for the A5 prescription print page and editor preview
+- **SEO metadata**: All pages have French `generateMetadata` exports. Root layout uses `%s | FocusClinic` template pattern.
 
 ## Settings Page
 
